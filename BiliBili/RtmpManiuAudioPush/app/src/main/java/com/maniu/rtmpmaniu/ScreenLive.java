@@ -23,7 +23,6 @@ public class ScreenLive extends Thread {
     //    入口方法
 //生产者入口
     public void addPackage(RTMPPackage rtmpPackage) {
-
         if (!isLiving) {
             return;
         }
@@ -47,7 +46,7 @@ public class ScreenLive extends Thread {
             return;
         }
         VideoCodec videoCodec = new VideoCodec(this);
-            videoCodec.startLive(mediaProjection);
+        videoCodec.startLive(mediaProjection);
         AudioCodec audioCodec = new AudioCodec(this);
         audioCodec.startLive();
         while (isLiving) {
@@ -57,21 +56,13 @@ public class ScreenLive extends Thread {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-//            发送数据
+//          发送数据
             Log.i(TAG, "取出数据" );
             if (rtmpPackage.getBuffer() != null && rtmpPackage.getBuffer().length != 0) {
                 Log.i(TAG, "run: ----------->推送 "+ rtmpPackage.getBuffer().length);
                 sendData(rtmpPackage.getBuffer(), rtmpPackage.getBuffer()
                         .length , rtmpPackage.getTms(), rtmpPackage.getType());
             }
-
         }
-
-
-
     }
-
-
-
-
 }

@@ -69,7 +69,7 @@ public class VideoCodec extends  Thread{
         while (isLiving) {
             if (System.currentTimeMillis() - timeStamp >= 2000) {
                 Bundle params = new Bundle();
-                //立即刷新 让下一帧是关键帧
+                //立即刷新 让下一帧是关键帧 I 帧
                 params.putInt(MediaCodec.PARAMETER_KEY_REQUEST_SYNC_FRAME, 0);
                 mediaCodec.setParameters(params);
                 timeStamp = System.currentTimeMillis();
@@ -79,17 +79,19 @@ public class VideoCodec extends  Thread{
             if (index >= 0) {
                 if (startTime == 0) {
                     // 微妙转为毫秒 dsp芯片 按照当时编码的系统时间 打出来的
+                    // bufferInfo.presentationTimeUs 是绝对时间, 结果就是毫秒
                     startTime = bufferInfo.presentationTimeUs / 1000;
                 }
                 ByteBuffer buffer = mediaCodec.getOutputBuffer(index);
                 byte[] outData = new byte[bufferInfo.size];
                 buffer.get(outData);
-//                FileUtils.writeBytes(outData);
-//                h264文件  ---> MP4
+//              FileUtils.writeBytes(outData);
+//              FileUtils.writeBytes(outData) 写入了 h264文件, 可以再将 h264 文件转化为 MP4
 
+                //当前时间 - 起始时间 就是 相对时间
                 RTMPPackage rtmpPackage = new RTMPPackage(outData, (bufferInfo.presentationTimeUs / 1000) - startTime);
                 rtmpPackage.setType(RTMPPackage.RTMP_PACKET_TYPE_VIDEO);
-                screenLive.addPackage(rtmpPackage);
+                screenLive.addPackage(rtmpPackage); //将 rtmpPackage 添加到 screenLive 的队列中
                 mediaCodec.releaseOutputBuffer(index, false);
             }
 //            起点

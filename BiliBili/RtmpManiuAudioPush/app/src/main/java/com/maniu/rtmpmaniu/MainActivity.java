@@ -17,7 +17,7 @@ import android.widget.TextView;
 import com.maniu.rtmpmaniu.databinding.ActivityMainBinding;
 //mp4
 public class MainActivity extends AppCompatActivity {
-    private String url = "rtmp://live-push.bilivideo.com/live-bvc/?streamname=live_345162489_81809986&key=6ba7ec38481c5dd2b3f8e4fb2b5fb8e0&schedule=rtmp&pflag=1";
+    private String url = "rtmp://live-push.bilivideo.com/live-bvc/?streamname=live_524987038_52393108&key=60c1c9c16504355c743812b4c3ceb28c&schedule=rtmp&pflag=1";
     private MediaProjectionManager mediaProjectionManager;
     private MediaProjection mediaProjection;
     @Override
