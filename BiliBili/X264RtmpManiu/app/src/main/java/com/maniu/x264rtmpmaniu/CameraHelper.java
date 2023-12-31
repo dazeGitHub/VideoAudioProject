@@ -12,6 +12,9 @@ import com.maniu.x264rtmpmaniu.utils.ImageUtil;
 import java.util.Iterator;
 import java.util.List;
 
+//操作摄像头只能 Java 层, 如果是 Native 层也能做 (通过反射)
+//使用摄像头的三种方式 Camera1 Camera2 和 CameraX
+//Camera1 需要在 onPreviewFrame() 方法中旋转摄像头数据, CameraX 不需要旋转
 public class CameraHelper implements SurfaceHolder.Callback, Camera.PreviewCallback {
     private static final String TAG = "CameraHelper";
     private Activity mActivity;
@@ -32,6 +35,7 @@ public class CameraHelper implements SurfaceHolder.Callback, Camera.PreviewCallb
         mWidth = width;
         mHeight = height;
     }
+
     public void switchCamera() {
         if (mCameraId == Camera.CameraInfo.CAMERA_FACING_BACK) {
             mCameraId = Camera.CameraInfo.CAMERA_FACING_FRONT;
@@ -138,7 +142,6 @@ public class CameraHelper implements SurfaceHolder.Callback, Camera.PreviewCallb
         Log.d(TAG, "设置预览分辨率 width:" + size.width + " height:" + size.height);
     }
 
-
     public void setPreviewDisplay(SurfaceHolder surfaceHolder) {
         mSurfaceHolder = surfaceHolder;
         mSurfaceHolder.addCallback(this);
@@ -166,7 +169,6 @@ public class CameraHelper implements SurfaceHolder.Callback, Camera.PreviewCallb
         stopPreview();
     }
 
-
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
         // data数据依然是倒的
@@ -176,8 +178,6 @@ public class CameraHelper implements SurfaceHolder.Callback, Camera.PreviewCallb
         mPreviewCallback.onPreviewFrame(yuv, camera);
         camera.addCallbackBuffer(buffer);
     }
-
-
 
     public void setOnChangedSizeListener(OnChangedSizeListener listener) {
         mOnChangedSizeListener = listener;

@@ -18,18 +18,21 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:onClick="toggleCamera"
             android:text="切换" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:onClick="startLive"
             android:text="开始直播" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:onClick="stopLive"
             android:text="停止直播" />
     </LinearLayout>

@@ -19,6 +19,5 @@ public class VideoChannel implements Camera.PreviewCallback {
         if (isLiving) {
             mLivePusher.native_pushVideo(data);
         }
-
     }
 }
