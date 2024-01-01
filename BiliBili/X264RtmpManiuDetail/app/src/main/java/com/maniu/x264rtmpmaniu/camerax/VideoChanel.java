@@ -129,7 +129,7 @@ public class VideoChanel implements Preview.OnPreviewOutputUpdateListener, Image
             ImageUtil.yuvToNv21(y, u, v, nv21, heigth, width);
             ImageUtil.nv21_rotate_to_90(nv21, nv21_rotated, heigth, width);
             byte[] temp = ImageUtil.nv21toNV12(nv21_rotated, nv12);
-//temp 0---index  y   index -m  v      m-n  u
+//          算出 temp 从多少到多少是 y, u 和 v
 //            MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
 //            int inIndex = mediaCodec.dequeueInputBuffer(100000);
 //            if (inIndex >= 0) {
@@ -178,5 +178,4 @@ public class VideoChanel implements Preview.OnPreviewOutputUpdateListener, Image
             e.printStackTrace();
         }
     }
-
 }

@@ -13,7 +13,7 @@ public:
     ~VideoChannel();
     //创建x264编码器
     void setVideoEncInfo(int width, int height, int fps, int bitrate);
-//真正开始编码一帧数据
+    //真正开始编码一帧数据
     void encodeData(int8_t *data);
 private:
     x264_picture_t *pic_in = 0;

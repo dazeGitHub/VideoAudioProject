@@ -16,6 +16,8 @@ android {
         externalNativeBuild {
             cmake {
                 cppFlags ""
+                //配置只能编码 armeabi-v7a 防止编译报错
+                //如果要编译 armeabi-v8a, 那么到 Linux 中交叉编译出 v8a 的 so 库后偶再修改这里
                 abiFilters 'armeabi-v7a'
             }
         }
