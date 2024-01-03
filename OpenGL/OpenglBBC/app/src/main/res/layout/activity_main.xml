@@ -6,8 +6,8 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-<com.maniu.openglbbc.CameraView
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"/>
+    <com.maniu.openglbbc.CameraView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </RelativeLayout>
