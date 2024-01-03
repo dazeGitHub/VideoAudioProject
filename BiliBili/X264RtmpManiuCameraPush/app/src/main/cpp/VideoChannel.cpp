@@ -129,6 +129,7 @@ VideoChannel::~VideoChannel() {
 }
 
 void VideoChannel::sendFrame(int type, int payload, uint8_t *p_payload) {
+    //去除分隔符
     //去掉 00 00 00 01 / 00 00 01
     if (p_payload[2] == 0x00){
         payload -= 4;
@@ -137,14 +138,14 @@ void VideoChannel::sendFrame(int type, int payload, uint8_t *p_payload) {
         payload -= 3;
         p_payload += 3;
     }
+
     RTMPPacket *packet = new RTMPPacket;
     int bodysize = 9 + payload;
     RTMPPacket_Alloc(packet, bodysize);
     RTMPPacket_Reset(packet);
 //    int type = payload[0] & 0x1f;
-    packet->m_body[0] = 0x27;
-    //关键帧
-    if (type == NAL_SLICE_IDR) {
+    packet->m_body[0] = 0x27; //非关键帧是 0x27
+    if (type == NAL_SLICE_IDR) { //关键帧
         LOGE("关键帧");
         packet->m_body[0] = 0x17;
     }
@@ -182,22 +183,26 @@ void VideoChannel::encodeData(int8_t *data) {
         *(pic_in->img.plane[2] + i) = *(data + ySize + i * 2);
     }
     //编码出的数据 H264  一帧      nalu
-    x264_nal_t *pp_nals;
+    x264_nal_t * pp_nals;
     //编码出了几个 nalu （暂时理解为帧）  1   pi_nal  1  永远是1
     int pi_nal;
-//编码出的参数  BufferInfo
+//  编码出的参数  BufferInfo
     x264_picture_t pic_out;
     //编码出的数据 H264
     x264_encoder_encode(videoCodec, &pp_nals, &pi_nal, pic_in, &pic_out);
-//借助java  --》文件
+
+//  借助java  --》文件
 //    if (pi_nal > 0) {
-//
 //        for (int i = 0; i < pi_nal; ++i) {
 //            LOGE("i  %d",i);
-//            javaCallHelper->postH264(reinterpret_cast<char *>(pp_nals[i].p_payload), pp_nals[i].i_payload);
+//            javaCallHelper -> postH264(
+//                    reinterpret_cast<char *>(pp_nals[i].p_payload), //pp_nals[i].p_payload 其实是字节数组
+//                    pp_nals[i].i_payload
+//            );
 //        }
-//    } sps  pps    x264  sps  pps
-    uint8_t sps[100];
+//    }//sps  pps    x264  sps  pps
+
+    uint8_t sps[100];   //sps 长度是 100 够了
     uint8_t pps[100];
     int sps_len, pps_len;
     for (int i = 0; i < pi_nal; ++i) {
@@ -205,24 +210,19 @@ void VideoChannel::encodeData(int8_t *data) {
             // 去掉 00 00 00 01
             sps_len = pp_nals[i].i_payload - 4;
             memcpy(sps, pp_nals[i].p_payload + 4, sps_len);
-//            要1  不要2      要 1  不要 2
-//按照  硬解码  sps ps   数组 I帧  不要
+//          要1  不要2      要 1  不要 2
+//          按照  硬解码  sps ps   数组 I帧  不要
         } else if (pp_nals[i].i_type == NAL_PPS) {
             pps_len = pp_nals[i].i_payload - 4;
             memcpy(pps, pp_nals[i].p_payload + 4, pps_len);
-            //拿到pps 就表示 sps已经拿到了
+            //拿到pps 就表示 sps已经拿到了, 此时发送 sps 和 pps
             sendSpsPps(sps, pps, sps_len, pps_len);
-
         } else {
             //关键帧、非关键帧
+            //因为前面设置了 param.b_repeat_headers = 1;  即 sps 和 pps 在每个 I 帧前重复输出, 所以这里不用开发者手动输出
             sendFrame(pp_nals[i].i_type,pp_nals[i].i_payload,pp_nals[i].p_payload);
         }
-
     }
-
-
-
-
     LOGE("--->  encodeData 2");
 }
 

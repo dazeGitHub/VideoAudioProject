@@ -17,7 +17,6 @@ import com.maniu.x264rtmpmaniu.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
     private LivePusher livePusher;
-    private String url = "rtmp://live-push.bilivideo.com/live-bvc/?streamname=live_345162489_81809986&key=03693092c85bd15a1d3fbbc227da0ad1&schedule=rtmp";
     VideoChanel videoChanel;
     TextureView textureView;
     static {
@@ -35,8 +34,6 @@ public class MainActivity extends AppCompatActivity {
         livePusher.setVideoChannel(videoChanel);
     }
 
-
-
     public boolean checkPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -51,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startLive(View view) {
-
-        livePusher.startLive("rtmp://live-push.bilivideo.com/live-bvc/?streamname=live_345162489_81809986&key=6ba7ec38481c5dd2b3f8e4fb2b5fb8e0&schedule=rtmp&pflag=1");
-         }
+        livePusher.startLive("rtmp://live-push.bilivideo.com/live-bvc/?streamname=live_524987038_52393108&key=60c1c9c16504355c743812b4c3ceb28c&schedule=rtmp&pflag=1");
+     }
 }

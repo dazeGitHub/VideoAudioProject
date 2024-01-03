@@ -23,19 +23,21 @@ public class LivePusher {
 
     public native void native_start(String path);
 
+    //得到摄像头数据时才能得到 width 和 height, 这个 width 和 height 不是自己设置的
     public native void native_setVideoEncInfo(int width, int height, int fps, int bitrate);
+
 //    yuv数据推过来
     public native void native_pushVideo(byte[] data);
 
     public native void native_stop();
 
     public native void native_release();
-//native 层 回调
+
+//  native 层 回调该方法
     private void postData(byte[] data) {
-        Log.i("david", "postData: "+data.length);
+        Log.i("david", "postData: " + data.length);
         FileUtils.writeBytes(data);
         FileUtils.writeContent(data);
-
     }
 
     public void startLive(String path) {
@@ -45,7 +47,4 @@ public class LivePusher {
         }
         videoChannel.startLive();
     }
-
-
-
 }

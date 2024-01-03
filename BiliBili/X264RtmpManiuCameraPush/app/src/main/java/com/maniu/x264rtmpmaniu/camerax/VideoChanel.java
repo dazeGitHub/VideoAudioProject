@@ -55,8 +55,8 @@ public class VideoChanel implements Preview.OnPreviewOutputUpdateListener, Image
         Preview preview = new Preview(previewConfig);
         preview.setOnPreviewOutputUpdateListener(this);
         CameraX.bindToLifecycle(lifecycleOwner,preview,imageAnalysis);
-
     }
+
     private ReentrantLock lock = new ReentrantLock();
     private byte[] y;
     private byte[] u;
@@ -65,6 +65,7 @@ public class VideoChanel implements Preview.OnPreviewOutputUpdateListener, Image
     private byte[] nv21;
     byte[] nv21_rotated;
     byte[] nv12;
+
     @Override
     public void analyze(ImageProxy image, int rotationDegrees) {
         if (!isLiving) {
@@ -80,9 +81,8 @@ public class VideoChanel implements Preview.OnPreviewOutputUpdateListener, Image
             y = new byte[planes[0].getBuffer().limit() - planes[0].getBuffer().position()];
             u = new byte[planes[1].getBuffer().limit() - planes[1].getBuffer().position()];
             v = new byte[planes[2].getBuffer().limit() - planes[2].getBuffer().position()];
-//             初始化native层 编码
-            this.livePusher.native_setVideoEncInfo(image.getHeight(),
-                    image.getWidth(), 10, 640_000);
+//          初始化 native 层 编码, 因为摄像头是横着的, 所以宽高要反着写
+            this.livePusher.native_setVideoEncInfo(image.getHeight(), image.getWidth(), 10, 640_000);
         }
         if (image.getPlanes()[0].getBuffer().remaining() == y.length) {
             planes[0].getBuffer().get(y);
@@ -91,19 +91,20 @@ public class VideoChanel implements Preview.OnPreviewOutputUpdateListener, Image
             int stride = planes[0].getRowStride();
             Size size = new Size(image.getWidth(), image.getHeight());
             int width = size.getHeight();
-            int heigth = planes[0].getRowStride();
+            int height = planes[0].getRowStride();
             if (nv21 == null) {
-                nv21 = new byte[heigth * width * 3 / 2];
-                nv21_rotated = new byte[heigth * width * 3 / 2];
+                nv21 = new byte[height * width * 3 / 2];
+                nv21_rotated = new byte[height * width * 3 / 2];
             }
-            ImageUtil.yuvToNv21(y, u, v, nv21, heigth, width);
-            ImageUtil.nv21_rotate_to_90(nv21, nv21_rotated, heigth, width);
-//        一帧画面nv21_rotated 数据的起点
+            ImageUtil.yuvToNv21(y, u, v, nv21, height, width);
+            ImageUtil.nv21_rotate_to_90(nv21, nv21_rotated, height, width);
+//          一帧画面 nv21_rotated 数据的起点, 如果这里传 nv21,
+//          那么前面 this.livePusher.native_setVideoEncInfo(height, width) 中 height 和 width 不要反着写
             livePusher.native_pushVideo(nv21_rotated);
         }
         lock.unlock();
-
     }
+
     @Override
     public void onUpdated(Preview.PreviewOutput output) {
         SurfaceTexture surfaceTexture = output.getSurfaceTexture();
