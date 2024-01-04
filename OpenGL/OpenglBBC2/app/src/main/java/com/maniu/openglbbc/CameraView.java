@@ -16,8 +16,9 @@ import javax.microedition.khronos.opengles.GL10;
 public class CameraView extends GLSurfaceView implements Preview.OnPreviewOutputUpdateListener, GLSurfaceView.Renderer, SurfaceTexture.OnFrameAvailableListener {
     private SurfaceTexture mCameraTexure;
     ScreenFilter screenFilter;
-//   gpu 数据所在地方 cpu   gpu 意义
-    private  int textures=0;
+//   gpu 数据所在地方, 对 cpu 没有意义, 但是对 gpu 有意义
+    private  int textures = 0;
+
     public CameraView(Context context) {
         super(context);
     }
@@ -40,9 +41,10 @@ public class CameraView extends GLSurfaceView implements Preview.OnPreviewOutput
                 ((LifecycleOwner)  getContext(),
                         this);
     }
+
     @Override
     public void onUpdated(Preview.PreviewOutput output) {
-        mCameraTexure=  output.getSurfaceTexture();
+        mCameraTexure = output.getSurfaceTexture();
 //        mCameraTexure---- GLSurfaceView  报错    准备好了   才能够绑定
 //        纠正的举矩阵
 
@@ -55,9 +57,8 @@ public class CameraView extends GLSurfaceView implements Preview.OnPreviewOutput
         mCameraTexure.setOnFrameAvailableListener(this);
         screenFilter = new ScreenFilter( getContext());
 //       面向过程
-
-
     }
+
     // 每次有数据 的时候  都丢到这里  y  u   v   有1  没有 2
     @Override
     public void onFrameAvailable(SurfaceTexture surfaceTexture) {
@@ -70,16 +71,16 @@ public class CameraView extends GLSurfaceView implements Preview.OnPreviewOutput
     public void onSurfaceChanged(GL10 gl10, int i, int i1) {
 
     }
+
 //onDraw  ---> onDrawFrame
     @Override
     public void onDrawFrame(GL10 gl10) {
-//        gpu       确定形状    上色
+//      gpu       确定形状    上色
         mCameraTexure.updateTexImage();
-//        四个点，可是数组的大小为什么是16呢。
+//      4 x 4 = 16, 即使是设置为 2 x 2 也不影响
         float[] mtx = new float[16];
-        mCameraTexure.getTransformMatrix(mtx);
-//opengl 渲染
-        screenFilter.onDraw(getWidth(), getHeight(),mtx,textures);
+        mCameraTexure.getTransformMatrix(mtx); //得到纠正的矩阵, 和矩阵相乘可以得到正常的图像, 防止图像拉伸
+//      opengl 渲染
+        screenFilter.onDraw(getWidth(), getHeight(), mtx, textures);
     }
-
 }

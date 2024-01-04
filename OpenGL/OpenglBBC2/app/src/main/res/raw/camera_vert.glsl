@@ -29,8 +29,10 @@ uniform mat4 vMatrix;
 //    };
 //   顶点的坐标 传值给   片元程序
 varying  vec2 aCoord;
+
 void main() {
-//    opengl  形状确定
-    gl_Position=vPosition;
-    aCoord= (vMatrix*vCoord).xy;
+//  opengl  形状确定
+//  顶点程序使用世界坐标系
+    gl_Position = vPosition;
+    aCoord = (vMatrix * vCoord).xy; //矩阵相乘, 用来旋转图像 90 度
 }
