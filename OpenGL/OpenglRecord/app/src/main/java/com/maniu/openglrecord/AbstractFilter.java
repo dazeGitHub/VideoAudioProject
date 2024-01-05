@@ -54,6 +54,7 @@ public class AbstractFilter {
 
 //        建立通道
 
+//      4 表示 4 个字节, 第二个四表示 4 个坐标, 2 表示 每个坐标有两个值
         vertexBuffer =  ByteBuffer.allocateDirect(4 * 4 * 2).order(ByteOrder.nativeOrder()).asFloatBuffer();
         vertexBuffer.clear();
         vertexBuffer.put(VERTEX);
@@ -62,15 +63,14 @@ public class AbstractFilter {
                 .asFloatBuffer();
         textureBuffer.clear();
         textureBuffer.put(TEXTURE);
-
-
     }
+
     public void setSize(int width, int height) {
         mWidth = width;
         mHeight = height;
-
     }
-//    图片 纹理   责任链    上一个传递给你的是哪个纹理ID
+
+//    图片 纹理   类似责任链模式, 永远不知道上一个传递给你的是哪个纹理ID
     public int onDraw(int texture) {
         GLES20.glViewport(0, 0, mWidth, mHeight);
 //        使用程序
@@ -81,14 +81,10 @@ public class AbstractFilter {
 //        生效
         GLES20.glEnableVertexAttribArray(vPosition);
 
-
         textureBuffer.position(0);
-        GLES20.glVertexAttribPointer(vCoord, 2, GLES20.GL_FLOAT,
-                false, 0, textureBuffer);
+        GLES20.glVertexAttribPointer(vCoord, 2, GLES20.GL_FLOAT, false, 0, textureBuffer);
         //CPU传数据到GPU，默认情况下着色器无法读取到这个数据。 需要我们启用一下才可以读取
         GLES20.glEnableVertexAttribArray(vCoord);
-
-
         GLES20.glActiveTexture(GL_TEXTURE0);
 
 //生成一个采样
@@ -99,13 +95,9 @@ public class AbstractFilter {
 //真正开始渲染
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP,0,4);
         return texture;
-
     }
+
     public void beforeDraw() {
 
     }
-
-
-
-
 }

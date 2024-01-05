@@ -20,12 +20,10 @@ public class CameraView extends GLSurfaceView {
         setRenderer(renderer);
         /**
          * 刷新方式：
-         *     RENDERMODE_WHEN_DIRTY 手动刷新，調用requestRender();
+         *     RENDERMODE_WHEN_DIRTY 手动刷新，調用 requestRender();
          *     RENDERMODE_CONTINUOUSLY 自動刷新，大概16ms自動回調一次onDrawFrame方法
          */
         //注意必须在setRenderer 后面。
         setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
     }
-
-
 }

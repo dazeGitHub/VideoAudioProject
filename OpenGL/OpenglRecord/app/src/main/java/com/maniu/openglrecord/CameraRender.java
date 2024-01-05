@@ -11,20 +11,19 @@ import com.maniu.openglrecord.utils.CameraHelper;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-public class CameraRender implements GLSurfaceView.Renderer , Preview.OnPreviewOutputUpdateListener, SurfaceTexture.OnFrameAvailableListener {
+public class CameraRender implements GLSurfaceView.Renderer, Preview.OnPreviewOutputUpdateListener, SurfaceTexture.OnFrameAvailableListener {
     private CameraView cameraView;
     private CameraHelper cameraHelper;
     private SurfaceTexture mCameraTexure;
     private  int[] textures;
     float[] mtx = new float[16];
     private CameraFilter cameraFilter;
+
     public CameraRender(CameraView cameraView) {
         this.cameraView = cameraView;
         LifecycleOwner lifecycleOwner = (LifecycleOwner) cameraView.getContext();
-//        打开摄像头
+//      打开摄像头
         cameraHelper = new CameraHelper(lifecycleOwner, this);
-
-
     }
 
     @Override
@@ -46,6 +45,7 @@ public class CameraRender implements GLSurfaceView.Renderer , Preview.OnPreviewO
         mCameraTexure.getTransformMatrix(mtx);
         cameraFilter.setTransformMatrix(mtx);
     }
+
     //当有数据 过来的时候   onFrameAvailable 一次
     @Override
     public void onFrameAvailable(SurfaceTexture surfaceTexture) {
@@ -54,6 +54,6 @@ public class CameraRender implements GLSurfaceView.Renderer , Preview.OnPreviewO
 
     @Override
     public void onUpdated(Preview.PreviewOutput output) {
-        mCameraTexure=output.getSurfaceTexture();
+        mCameraTexure = output.getSurfaceTexture();
     }
 }
