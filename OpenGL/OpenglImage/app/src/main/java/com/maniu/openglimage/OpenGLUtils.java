@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+/*
+ 加载顶点和片元程序的工具类
+ */
 public class OpenGLUtils {
 //100% 相同
     public static int loadProgram(String vSource, String fSource) {
@@ -28,7 +31,6 @@ public class OpenGLUtils {
             throw new IllegalStateException("load vertex shader:" + GLES20.glGetShaderInfoLog
                     (vShader));
         }
-
 
         /**
          *  片元着色器
@@ -69,6 +71,7 @@ public class OpenGLUtils {
         GLES20.glDeleteShader(fShader);
         return program;
     }
+
     public static String readRawTextFile(Context context, int rawId) {
         InputStream is = context.getResources().openRawResource(rawId);
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
