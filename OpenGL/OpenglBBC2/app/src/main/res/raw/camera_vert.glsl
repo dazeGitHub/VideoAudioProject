@@ -8,6 +8,8 @@
 //gpu 的变量
 //    vec 坐标的意思      3个 立体    xyz    xy  4  个值
 attribute  vec4 vPosition;
+//声明精度 (有的手机必须要有)
+precision lowp float;
 
 //    float[] VERTEX = {
 //        -1.0f, -1.0f,
