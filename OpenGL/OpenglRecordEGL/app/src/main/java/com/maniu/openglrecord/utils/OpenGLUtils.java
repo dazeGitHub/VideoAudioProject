@@ -35,6 +35,7 @@ public class OpenGLUtils {
             1.0f, 0.0f
     };
 
+//  创建纹理
     public static void glGenTextures(int[] textures) {
         GLES20.glGenTextures(textures.length, textures, 0);
         for (int i = 0; i < textures.length; i++) {

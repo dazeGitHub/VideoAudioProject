@@ -15,11 +15,12 @@ import javax.microedition.khronos.opengles.GL10;
 public class CameraRender implements GLSurfaceView.Renderer , Preview.OnPreviewOutputUpdateListener, SurfaceTexture.OnFrameAvailableListener {
     private CameraView cameraView;
     private CameraHelper cameraHelper;
-    private SurfaceTexture mCameraTexure;
+    private SurfaceTexture mCameraTexture;
     private  int[] textures;
     float[] mtx = new float[16];
-    private CameraFilter cameraFilter;
 
+//  这两个都是滤镜
+    private CameraFilter cameraFilter;
     private ScreenFilter mScreenFilter;
 
     public CameraRender(CameraView cameraView) {
@@ -27,16 +28,14 @@ public class CameraRender implements GLSurfaceView.Renderer , Preview.OnPreviewO
         LifecycleOwner lifecycleOwner = (LifecycleOwner) cameraView.getContext();
 //        打开摄像头
 //        cameraHelper = new CameraHelper(lifecycleOwner, this);
-
-
     }
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-        Log.d("david", "onSurfaceCreated: "+Thread.currentThread().getName());
+        Log.d("david", "onSurfaceCreated: " + Thread.currentThread().getName());
         textures = new int[1];
-        mCameraTexure.attachToGLContext(textures[0]);
-        mCameraTexure.setOnFrameAvailableListener(this);
+        mCameraTexture.attachToGLContext(textures[0]);
+        mCameraTexture.setOnFrameAvailableListener(this);
         cameraFilter = new CameraFilter(cameraView.getContext());
         mScreenFilter = new ScreenFilter(cameraView.getContext());
     }
@@ -49,11 +48,12 @@ public class CameraRender implements GLSurfaceView.Renderer , Preview.OnPreviewO
 
     @Override
     public void onDrawFrame(GL10 gl) {
-        mCameraTexure.updateTexImage();
-        mCameraTexure.getTransformMatrix(mtx);
+        mCameraTexture.updateTexImage();
+        mCameraTexture.getTransformMatrix(mtx);
         cameraFilter.setTransformMatrix(mtx);
         cameraFilter.onDraw(textures[0]);
     }
+
     //当有数据 过来的时候   onFrameAvailable 一次
     @Override
     public void onFrameAvailable(SurfaceTexture surfaceTexture) {
@@ -62,6 +62,6 @@ public class CameraRender implements GLSurfaceView.Renderer , Preview.OnPreviewO
 
     @Override
     public void onUpdated(Preview.PreviewOutput output) {
-        mCameraTexure=output.getSurfaceTexture();
+        mCameraTexture =output.getSurfaceTexture();
     }
 }

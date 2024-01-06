@@ -14,5 +14,5 @@ void main(){
 //    gpu  需要渲染的 什么图像   形状
     gl_Position=vPosition;
 //    遍历的   for循环   性能比较低   目标     给片元上色
-    aCoord= vCoord.xy;
+    aCoord= vCoord.xy; //不需要传 vMatrix
 }

@@ -22,26 +22,19 @@ public class MediaRecorder {
         mHeight = height;
     }
 
-//start  主线程
+    //start  主线程
     public void start(float speed) throws IOException {
         HandlerThread handlerThread = new HandlerThread("VideoCodec");
         handlerThread.start();
         Looper looper = handlerThread.getLooper();
-
         mHandler = new Handler(looper);
 
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-//opengl环境
-
-
-//主 1 子线程2   调用opengl  --》  数据           编码
+                //opengl环境
+                //主 1 子线程2   调用opengl  --》  数据           编码
             }
         });
-
-
-
     }
-    
 }
