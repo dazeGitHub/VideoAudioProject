@@ -39,7 +39,7 @@ public class CameraRender implements GLSurfaceView.Renderer, Preview.OnPreviewOu
         mCameraTexure.setOnFrameAvailableListener(this);
         cameraFilter = new CameraFilter(cameraView.getContext());
         mScreenFilter = new ScreenFilter(cameraView.getContext());
-//当前线程
+//      当前线程
         String path = new File(Environment.getExternalStorageDirectory(), "input.mp4").getAbsolutePath();
         EGLContext eglContext = EGL14.eglGetCurrentContext();
         mMediaRecorder = new MediaRecorder(cameraView.getContext(), path, 480, 640, eglContext);

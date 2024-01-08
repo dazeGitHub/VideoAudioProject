@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 public class MediaRecorder {
-    private Handler mHandler;
+    private Handler mHandler; //在 EGL 线程中执行
     private final Context mContext;
     private final String mPath;
     private final int mWidth;
@@ -27,12 +27,13 @@ public class MediaRecorder {
 
     private MediaCodec mMediaCodec;
     private boolean isStart;
-//    封装格式  zip   rar  7zip    编码格式
+//    封装格式  zip   rar  7zip    编码格式 h264/h265
     private MediaMuxer mMediaMuxer;
 
     private int dataIndex;
 
     private float mSpeed;//5
+
     public MediaRecorder(Context context, String path, int width, int height, EGLContext eglContext) {
         mContext = context.getApplicationContext();
         mPath = path;
@@ -80,25 +81,37 @@ public class MediaRecorder {
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-//opengl环境  得到   当前线程上下文
+//              opengl环境  得到   当前线程上下文
                 mEglBase = new EGLBase(mContext, mWidth, mHeight, mInputSurface, mEglContext);
 
-//                EGL14.eglBindAPI(1);
-//                api  opengl 愉快的调用了
+//              不能直接在这里得到上下文
+//              EGLContext eglContext = EGL14.eglGetCurrentContext();
+
+//              EGL14.eglBindAPI(1);
+//              创建 EGLBase 后 opengl 的 api 就可以愉快的调用了
                 mMediaCodec.start();
                 isStart = true;
 
-//主 1 子线程2   调用opengl  --》  数据           编码
+//              主 1 子线程2   调用opengl  --》  数据           编码
             }
         });
-
-
     }
-//摄像头发布的每一帧 会调用一次 FBO 的纹理ID
+
+    //摄像头发布的每一帧 会调用一次 该方法,  FBO 的纹理ID
     public void encodeFrame(final int textureId, final long timestamp) {
         if (!isStart) {
             return;
         }
+
+//      不需要直接获取数据
+//        int index = mMediaCodec.dequeueInputBuffer(10000);
+//        if (index >= 0) {
+//            ByteBuffer byteBuffer = mMediaCodec.getInputBuffer(index);
+//            byteBuffer.put();
+//        }
+//      视频编码写完    再去官opengl  的数据
+//      从编码器的输出缓冲区获取编码后的数据就ok了
+
         mHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -107,46 +120,33 @@ public class MediaRecorder {
                 getCodec(false);
             }
         });
-
-//    把数据
-//        int index = mMediaCodec.dequeueInputBuffer(10000);
-//        if (index >= 0) {
-//            ByteBuffer byteBuffer = mMediaCodec.getInputBuffer(index);
-//            byteBuffer.put();
-//        }
-//视频编码写完    再去官opengl  的数据
-        //从编码器的输出缓冲区获取编码后的数据就ok了
-
     }
 
-//    人为 控制
+//  人为 控制
     private void getCodec(boolean endOfStream) {
-//            从surface 取到数据  并且输出到视频文件中
+//      从surface 取到数据  并且输出到视频文件中
         if (endOfStream) {
 //            编码出一个流结束符
             mMediaCodec.signalEndOfInputStream();
         }
         //输出缓冲区
         MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
-//if()     编码
+//      if()     编码
         while (true) {
-//<0 >=0  索引   1    -1   2
+//              <0 >=0  索引   1    -1   2
             int index = mMediaCodec.dequeueOutputBuffer(bufferInfo, 10_000);
-            if (index ==  MediaCodec.INFO_TRY_AGAIN_LATER) {
+            if (index ==  MediaCodec.INFO_TRY_AGAIN_LATER) { //INFO_TRY_AGAIN_LATER 值是 -1 表示数据还没编码好
                 // 如果是停止 我继续循环
                 // 继续循环 就表示不会接收到新的等待编码的图像
                 // 相当于保证mediacodec中所有的待编码的数据都编码完成了，不断地重试 取出编码器中的编码好的数据
                 // 标记不是停止 ，我们退出 ，下一轮接收到更多数据再来取输出编码后的数据
 
-//                咱们的数据没有编码好
+//              咱们的数据没有编码好
                 if (!endOfStream) {
                     break;
                 }
-
-
-
             } else if (index == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
-//直播    一路    直播了     添加了 直播  而
+//              例如 开始是一路直播, 后来添加了直播流变为二类直播
 
                 //开始编码 就会调用一次
                 MediaFormat outputFormat = mMediaCodec.getOutputFormat();
@@ -154,15 +154,13 @@ public class MediaRecorder {
                 // 增加一路指定格式的媒体流 视频
                 dataIndex =  mMediaMuxer.addTrack(outputFormat);
                 mMediaMuxer.start();
-//编码  和 分装   H264  封装
+//              编码  和 分装   H264  封装
 
             } else if (index == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
-//             少编码   一帧   大1  不大2
-
-
+//             即使 outputBuffer 改变了, 少编码或多编码一帧区别不大
             } else {
-//                index》=0
-//成功 取出一个有效的输出
+//              index》=0
+//              成功 取出一个有效的输出
                 ByteBuffer outputBuffer = mMediaCodec.getOutputBuffer(index);
                 //如果获取的ByteBuffer 是配置信息 ,不需要写出到mp4
                 if ((bufferInfo.flags & MediaCodec.BUFFER_FLAG_CODEC_CONFIG) != 0) {
@@ -170,31 +168,28 @@ public class MediaRecorder {
                 }
                 if (bufferInfo.size != 0) {
                     //写出 outputBuffer数据   ----》  封装格式中 mp4  极快
-                    bufferInfo.presentationTimeUs = (long) (bufferInfo.presentationTimeUs / mSpeed);
+                    bufferInfo.presentationTimeUs = (long) (bufferInfo.presentationTimeUs / mSpeed);//快进
 
                     //写到mp4
                     //根据偏移定位  bufferInfo.offset  ==0
-                    outputBuffer.position(bufferInfo.offset);
+                    outputBuffer.position(bufferInfo.offset);//bufferInfo.offset 也是 0
                     //ByteBuffer 可读写总长度
                     outputBuffer.limit(bufferInfo.offset + bufferInfo.size);
 
                     mMediaMuxer.writeSampleData(dataIndex, outputBuffer, bufferInfo);
-
                 }
 
                 //输出缓冲区 我们就使用完了，可以回收了，让mediacodec继续使用
                 mMediaCodec.releaseOutputBuffer(index, false);
 
-
                 if ((bufferInfo.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0) {
                     break;
                 }
-
             }
         }
-
     }
-//点击停止按钮的时候
+
+//  点击停止按钮的时候
     public void stop() {
         isStart = false;
         mHandler.post(new Runnable() {
@@ -210,11 +205,8 @@ public class MediaRecorder {
                 mEglBase.release();
                 mEglBase = null;
                 mInputSurface = null;
-
-
             }
         });
-
     }
 
 }

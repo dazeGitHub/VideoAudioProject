@@ -10,12 +10,12 @@
         android:id="@+id/cameraView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:orientation="vertical"
-        >
+        android:orientation="vertical">
 
         <Button
             android:layout_width="match_parent"
@@ -23,8 +23,8 @@
             android:layout_alignParentBottom="true"
             android:text="开始录制"
             android:onClick="startRecord"
-
             />
+
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -34,6 +34,5 @@
             />
 
     </LinearLayout>
-
 
 </RelativeLayout>

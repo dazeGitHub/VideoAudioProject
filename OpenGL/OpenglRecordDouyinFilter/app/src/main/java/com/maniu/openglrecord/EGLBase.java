@@ -11,32 +11,30 @@ import android.view.Surface;
 
 import javax.microedition.khronos.egl.EGL10;
 // 新的GL线程  编码耗时
-//FBP  显示器
-//    FBO   GlsurfceView  所在的线程
-
-//   传递给    HandlerThread  FBO数据传递着
-
-
-//     EGLDisplay    绘制 gl_FragColor ----》
-
-
-//  EGLDisplay  --->
+//除了 FBO 还需要显示器的原因 :
+//之前拿到的 FBO 数据是 GlSurfceView  所在的线程
+//要传递给 HandlerThread 所在的线程, 要将 FBO数据传递着
+//绘制 gl_FragColor 到 EGLDisplay 上
 public class EGLBase {
-//    mEglDisplay    放空  绘制   fbo
+//    mEglDisplay 是用来绘制东西的, 数据来源就是来自 fbo
     private EGLDisplay mEglDisplay;
     private EGLConfig mEglConfig;
     private EGLContext mEglContext;
     private EGLSurface mEglSurface;
 
     private ScreenFilter mScreenFilter;
+
+    //surface 是 MediaCodec 提供的
     public EGLBase(Context context, int width, int height, Surface surface, EGLContext eglContext) {
-        //配置EGL环境
+        //1. 配置EGL环境
         createEGL(eglContext);
         //把Surface贴到  mEglDisplay ，发生关系
         int[] attrib_list = {
                 EGL14.EGL_NONE
         };
         // 绘制线程中的图像 就是往这个mEglSurface 上面去画   mEglDisplay  画板   mEglSurface 画布   mEglContext 上下文
+        // mEglSurface 是给 GPU 用的
+        // 将 surface 和 mEglDisplay 进行了绑定
         mEglSurface = EGL14.eglCreateWindowSurface(mEglDisplay, mEglConfig, surface, attrib_list, 0);
         // 绑定当前线程的显示设备及上下文， 之后操作opengl，就是在这个虚拟显示上操作
         if (!EGL14.eglMakeCurrent(mEglDisplay,mEglSurface,mEglSurface,mEglContext)) {
@@ -45,12 +43,9 @@ public class EGLBase {
         //像虚拟屏幕画
         mScreenFilter = new ScreenFilter(context);
         mScreenFilter.setSize(width,height);
-
-
     }
-//
-    private void createEGL(EGLContext eglContext) {
 
+    private void createEGL(EGLContext eglContext) {
         mEglDisplay = EGL14.eglGetDisplay(EGL14.EGL_DEFAULT_DISPLAY);
         if (mEglDisplay == EGL14.EGL_NO_DISPLAY) {
             throw new RuntimeException("eglGetDisplay failed");
@@ -99,34 +94,30 @@ public class EGLBase {
             throw new RuntimeException("EGL Context Error.");
         }
     }
-//    假设外部已经把  textureId 给你了  不断地额在调用 textureId  数据
-    public void draw(int textureId,long timestamp){
-//textureId   --->数据     硬解 byte[]     int   gpu
-//mEglSurface  opengl  东西   android   surface   cpu 的
-//         gpu eglSwapBuffers
+
+//    假设外部已经把  textureId 给你了  不断地在调用 textureId  数据
+    public void draw(int textureId, long timestamp){
+//      textureId   --->数据     硬解 byte[]     int   gpu
+//      mEglSurface  opengl  东西   android   surface   cpu 的
+//      gpu eglSwapBuffers
         // 绑定当前线程的显示设备及上下文， 之后操作opengl，就是在这个虚拟显示上操作
-        if (!EGL14.eglMakeCurrent(mEglDisplay,mEglSurface,mEglSurface,mEglContext)) {
+        if (!EGL14.eglMakeCurrent(mEglDisplay, mEglSurface, mEglSurface, mEglContext)) {
             throw  new RuntimeException("eglMakeCurrent 失败！");
         }
         //画画 画到虚拟屏幕上  上一个环境FBO 的数据   纹理ID   -----》  sccreenfilter 虚拟滤镜
         mScreenFilter.onDraw(textureId);
 
         //刷新eglsurface的时间戳
-        EGLExt.eglPresentationTimeANDROID(mEglDisplay,mEglSurface,timestamp);
+        EGLExt.eglPresentationTimeANDROID(mEglDisplay, mEglSurface, timestamp);
 
-//        ？ 交换surface
+        //交换surface
         EGL14.eglSwapBuffers(mEglDisplay, mEglSurface);
-
-
-
     }
-
 
     public void release() {
 //        销毁  mEglSurface  和  mEglDisplay绑定关系
         EGL14.eglDestroySurface(mEglDisplay, mEglSurface);
-        EGL14.eglMakeCurrent(mEglDisplay, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_SURFACE,
-                EGL14.EGL_NO_CONTEXT);
+        EGL14.eglMakeCurrent(mEglDisplay, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_CONTEXT);
 //          mEglDisplay    设值成没有上下文
         EGL14.eglDestroyContext(mEglDisplay, mEglContext);
 //          mEglDisplay   mEglContext 进行销毁

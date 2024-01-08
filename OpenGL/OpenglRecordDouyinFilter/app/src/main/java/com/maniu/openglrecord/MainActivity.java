@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
 //        面向过程     基于 gl线程上下文
 //        EGL14.eglBindAPI(1);
     }
+
     public boolean checkPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {

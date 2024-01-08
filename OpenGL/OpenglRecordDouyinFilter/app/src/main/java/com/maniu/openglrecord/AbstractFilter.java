@@ -27,9 +27,7 @@ public class AbstractFilter {
             1.0f, 1.0f
     };
 
-
     protected int vMatrix;
-
 
     public int program;
     //句柄  gpu中  vPosition
@@ -43,8 +41,6 @@ public class AbstractFilter {
     public int mWidth;
     public int mHeight;
 
-
-
     public AbstractFilter(Context context, int vertexShaderId, int fragmentShaderId) {
         String vertexSharder = OpenGLUtils.readRawTextFile(context, vertexShaderId);
 //  先编译    再链接   再运行  程序
@@ -57,30 +53,23 @@ public class AbstractFilter {
         vCoord = GLES20.glGetAttribLocation(program, "vCoord");//1
         //采样点的坐标
         vTexture = GLES20.glGetUniformLocation(program, "vTexture");
-        vMatrix = GLES20.glGetUniformLocation(program,
-                "vMatrix");
+        vMatrix = GLES20.glGetUniformLocation(program, "vMatrix");
 
-//        建立通道
-
+//      建立通道
         vertexBuffer =  ByteBuffer.allocateDirect(4 * 4 * 2).order(ByteOrder.nativeOrder()).asFloatBuffer();
         vertexBuffer.clear();
         vertexBuffer.put(VERTEX);
 
-        textureBuffer = ByteBuffer.allocateDirect(4 * 4 * 2).order(ByteOrder.nativeOrder())
-                .asFloatBuffer();
+        textureBuffer = ByteBuffer.allocateDirect(4 * 4 * 2).order(ByteOrder.nativeOrder()).asFloatBuffer();
         textureBuffer.clear();
         textureBuffer.put(TEXTURE);
-
-
     }
+
     public void setSize(int width, int height) {
         mWidth = width;
         mHeight = height;
-
-
-
-
     }
+
 //    图片 纹理   责任链    上一个传递给你的是哪个纹理ID
     public int onDraw(int texture) {
         GLES20.glViewport(0, 0, mWidth, mHeight);
@@ -102,22 +91,19 @@ public class AbstractFilter {
 
         GLES20.glActiveTexture(GL_TEXTURE0);
 
-//生成一个采样  纹理使用的是什么采样器 ，两种 1   普通采样  限定在GPU
-//          GL_TEXTURE_2D  GPU内存1     GL_TEXTURE_EXTERNAL_OES 外接设备
+//      生成一个采样  纹理使用的是什么采样器, 两种 1   普通采样  限定在GPU
+//      GL_TEXTURE_2D  GPU内存1     GL_TEXTURE_EXTERNAL_OES 表示外接设备(摄像头)采样
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture);
         GLES20.glUniform1i(vTexture, 0);
 
         beforeDraw();
-//真正开始渲染
+
+//      真正开始渲染
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP,0,4);
         return texture;
-
     }
+
     public void beforeDraw() {
 
     }
-
-
-
-
 }

@@ -5,6 +5,9 @@ attribute vec4 vPosition;//0
 //接收纹理坐标，接收采样器采样图片的坐标  camera
 attribute vec2 vCoord;
 
+//矩阵获取了给摄像头  vMatrix 不需要有
+//uniform mat4 vMatrix;
+
 //形状  矩形
 //传给片元着色器 像素点
 varying vec2 aCoord;

@@ -9,12 +9,9 @@ import android.opengl.GLES20;
 import com.maniu.openglrecord.utils.OpenGLUtils;
 
 public class CameraFilter1 extends AbstractFilter {
-    protected int vMatrix;
-
     private float[] matrix;
 //fbo
     private int[] mFrameBuffers;
-
 
 //    纹理
     private int[] mFrameBufferTextures;
@@ -35,8 +32,6 @@ public class CameraFilter1 extends AbstractFilter {
         // 1、创建几个fbo 2、保存fbo id的数据 3、从这个数组的第几个开始保存
         GLES20.glGenFramebuffers(mFrameBuffers.length,mFrameBuffers,0);
 
-
-
         //2、创建属于fbo的纹理
         mFrameBufferTextures = new int[1]; //用来记录纹理id
         //创建纹理
@@ -52,10 +47,12 @@ public class CameraFilter1 extends AbstractFilter {
                 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, null);
 
         // 让fbo与纹理绑定起来 ， 后续的操作就是在操作fbo与这个纹理上了
-        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER,mFrameBuffers[0]);
+        // 下面两行代码有前后关系
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFrameBuffers[0]);
         GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER,GLES20.GL_COLOR_ATTACHMENT0,
                 GLES20.GL_TEXTURE_2D, mFrameBufferTextures[0], 0);
-//不使用了  设值完了      方便    GLES20.glBindFramebuffer
+
+        //这不是解绑的意思, 代表前面已经设置值完成
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D,0);
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER,0);
     }
@@ -65,7 +62,7 @@ public class CameraFilter1 extends AbstractFilter {
 
         //设置显示窗口
         GLES20.glViewport(0, 0, mWidth, mHeight);
-//        你不需要绘制到屏幕  opengl 知道    我不需要绘制到屏幕    FBO 渲染目标  gl_FragColor ==FBO
+//        你不需要绘制到屏幕  opengl 知道    不需要绘制到屏幕, 而是绘制到 FBO 里面去
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER,mFrameBuffers[0]);
 
         //不调用的话就是默认的操作glsurfaceview中的纹理了。显示到屏幕上了
@@ -77,7 +74,7 @@ public class CameraFilter1 extends AbstractFilter {
         GLES20.glVertexAttribPointer(vPosition, 2, GLES20.GL_FLOAT, false, 0, vertexBuffer);
         GLES20.glEnableVertexAttribArray(vPosition);
 
-//这句话不一样
+//      这句话不一样
         GLES20.glUniformMatrix4fv(vMatrix,1,false,matrix,0);
 
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
