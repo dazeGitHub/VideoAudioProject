@@ -45,7 +45,7 @@ public class CameraRender implements GLSurfaceView.Renderer, Preview.OnPreviewOu
         cameraFilter = new CameraFilter(cameraView.getContext());
         mScreenFilter = new ScreenFilter(cameraView.getContext());
         beautyFilter = new BeautyFilter(cameraView.getContext());
-//        soulFilter = new SoulFilter(cameraView.getContext());
+        soulFilter = new SoulFilter(cameraView.getContext());
 //当前线程
         String path = new File(Environment.getExternalStorageDirectory(), "input.mp4").getAbsolutePath();
         EGLContext eglContext = EGL14.eglGetCurrentContext();
