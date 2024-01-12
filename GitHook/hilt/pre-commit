@@ -1,0 +1,40 @@
+#!/bin/bash
+echo "进行代码检测   和   单元测试检查，总共耗时1min 30s 稍等"
+echo "正在进行第一步  lint代码检测"
+CURDIR=$(cd $(dirname ${BASH_SOURCE[0]});  cd ../../; pwd )
+$CURDIR/./gradlew.bat lintDebug
+if [ $? -eq 0   ]; then
+    echo "代码检测通过"
+	echo "即将进行第二步 单元测试   "
+else
+	echo "代码检测不用过，请仔细检查"
+	exit 1
+fi
+
+commit_msg=$1
+echo  $commit_msg
+
+
+
+echo "恭喜你   代码检测通过"
+
+
+echo "正在进行 单元测试"
+
+echo $CURDIR
+$CURDIR/./gradlew test
+
+
+isPas=("$?" -ge "0")
+echo "数量 $?"
+echo "测试结果 $isPas"
+num=$((isPas+0))
+if [ $num -eq 0 ]
+then
+    echo "单元测试检测通过"
+else
+	echo "单元测试未通过"
+    exit 1
+fi
+
+
