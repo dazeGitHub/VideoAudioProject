@@ -11,12 +11,17 @@ add_library(
         SHARED
         native-lib.cpp
         MNQueue.cpp)
+
+#引入 liblog.so, 在系统环境目录 : ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/aarch64-linux-android/28/liblog.so
 find_library(
         log-lib
         log)
+
+#引入 libandroid.so
 find_library(
         android-lib
         android)
+
 target_link_libraries(
         maniuijk
         avcodec
@@ -27,3 +32,4 @@ target_link_libraries(
         swscale
         log
         android)
+#使用这种方式也可以 : target_link_libraries(${log-lib}  ${android-lib})

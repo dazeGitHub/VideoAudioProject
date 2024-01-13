@@ -16,18 +16,17 @@ public class MNPlayer {
     }
 //没有问题  鲜花
     public native void play(String url, Surface surface);
-//直播  rtm 协议 直播 万能
-//    获取到视频的宽高
-    public void onSizeChange(int width, int heigth) {
-        float ratio = width / (float) heigth;
+
+//  直播  rtm 协议 直播 万能
+//  根据视频的宽高 width 和 height 计算控件的宽高 videoWidth 和 videoHeight
+    public void onSizeChange(int width, int height) {
+        float ratio = width / (float) height;
         int screenWidth = surfaceView.getContext().getResources().getDisplayMetrics().widthPixels;
         int videoWidth = 0;
-        int videoHeigth = 0;
+        int videoHeight = 0;
         videoWidth = screenWidth;
-        videoHeigth = (int) (screenWidth / ratio);
-        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(videoWidth, videoHeigth);
-        surfaceView.setLayoutParams(lp); //调整surfaceview控件的大小
+        videoHeight = (int) (screenWidth / ratio);
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(videoWidth, videoHeight);
+        surfaceView.setLayoutParams(lp); //调整 surfaceView 控件的大小
     }
-
-
 }

@@ -78,11 +78,12 @@ MainActivity extends AppCompatActivity {
 
     //    kuaib
     public void play(View view) {
-        String folderurl = new File(Environment.getExternalStorageDirectory(), "input.avi").
-                getAbsolutePath();
-//        folderurl = "http://39.134.65.162/PLTV/88888888/224/3221225611/index.m3u8";
-//        folderurl = "http://zhibo.hkstv.tv/livestream/mutfysrq/playlist.m3u8";
+        //input.rmvb  input.mkv  input.avi
+//      String folderUrl = new File(Environment.getExternalStorageDirectory(), "input.avi").getAbsolutePath();
+//      ffmpeg 不光能播放直播 m3u8, 还能播放 rtmp
+        String folderUrl = "http://39.134.65.162/PLTV/88888888/224/3221225611/index.m3u8";
+//      folderurl = "http://zhibo.hkstv.tv/livestream/mutfysrq/playlist.m3u8";
         mnPlayer = new MNPlayer(surfaceView);
-        mnPlayer.play(folderurl, surface);
+        mnPlayer.play(folderUrl, surface);
     }
 }
