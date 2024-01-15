@@ -324,6 +324,7 @@ Java_com_maniu_maniuijk_MNPlayer_play(JNIEnv *env, jobject instance, jstring url
     mInstance = env->NewGlobalRef(instance);
 //    env->DeleteGlobalRef(mInstance)
     const char *url = env->GetStringUTFChars(url_, 0);
+//  -------------- 这些初始化很耗时, 不应该放到主线程 (Java 层调用 play() 方法不应该在主线程), 这里暂时放到了主线程 ----------------------
 //    初始化ffmpeg的网络模块
     avformat_network_init();
 //   初始化总上下文
