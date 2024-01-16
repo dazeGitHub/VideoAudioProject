@@ -29,7 +29,7 @@ void MNAudio::play() {
 }
 
 //播放   喇叭需要取出数据   ---》播放  主动了   孩子    肚子饿    不断吃
-//  喇叭  --- pcmBufferCallBack 主动调用
+//  喇叭  --- pcmBufferCallBack 是会不断被调用的
 void pcmBufferCallBack(SLAndroidSimpleBufferQueueItf bf, void * context)
 {
 //    audio  解码    送到AudioTrack 被动   口中
