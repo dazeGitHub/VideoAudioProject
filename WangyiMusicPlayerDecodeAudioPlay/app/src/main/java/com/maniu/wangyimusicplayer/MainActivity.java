@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements DiscView.IPlayInf
         list.add(musicData2.getMusicName());
         list.add(musicData3.getMusicName());
         Intent intent = new Intent(this, MusicService.class);
-        intent.putStringArrayListExtra(PARAM_MUSIC_LIST, list);
+        intent.putStringArrayListExtra(PARAM_MUSIC_LIST, list); //(Serializable)mMusicDatas
         startService(intent);
     }
     @Override

@@ -10,9 +10,9 @@
 
 extern "C"
 {
-#include <libswresample/swresample.h>
-#include <SLES/OpenSLES.h>
-#include <SLES/OpenSLES_Android.h>
+    #include <libswresample/swresample.h>
+    #include <SLES/OpenSLES.h>
+    #include <SLES/OpenSLES_Android.h>
     #include <libavcodec/codec_par.h>
     #include <libavcodec/avcodec.h>
 };
@@ -57,8 +57,8 @@ public:
 
     double clock;//当前播放的时间    准确时间
 //1ms  1ms
-// 3ms   个  1   3m
-//时间单位         总时间/帧数     单位时间     *   时间戳= pts  * 总时间/帧数
+//假设以 3ms 为一个时间单位,   个  1   3m
+//time_base 是时间单位 = 总时间/帧数, 那么 单位时间 * 时间戳 = pts  * 总时间/帧数
     AVRational time_base;
     jmethodID jmid_timeinfo;
 

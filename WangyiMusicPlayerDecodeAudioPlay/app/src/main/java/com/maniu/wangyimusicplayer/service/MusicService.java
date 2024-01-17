@@ -87,7 +87,6 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
                 intent.putExtra("currentTime", currentTime);
                 intent.putExtra("totalTime", totalTime);
                 LocalBroadcastManager.getInstance(MusicService.this).sendBroadcast(intent);
-
             }
 
             @Override
@@ -145,6 +144,7 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         mnPlayer.setSource(path);
         mnPlayer.parpared();
     }
+
     private void pause() {
         mnPlayer.pause();
     }

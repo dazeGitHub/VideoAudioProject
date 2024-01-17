@@ -135,7 +135,7 @@ void MNFFmpeg::start() {
         } else {
             av_packet_free(&avPacket);
             av_free(avPacket);
-//特殊情况
+//          特殊情况  暂停 或 结束, 那么不应该让它停止
             while(playstatus != NULL && !playstatus->exit)
             {
                 if(audio->queue->getQueueSize() > 0)
@@ -150,13 +150,12 @@ void MNFFmpeg::start() {
 
         if(playstatus != NULL && playstatus->exit)
         {
-            audio->queue->clearAvpacket();
+            audio->queue->clearAvpacket();//清空队列
             playstatus->exit = true;
-
         }
     }
-
 }
+
 MNFFmpeg::MNFFmpeg(MNPlaystatus *playstatus,MNCallJava *callJava, const char *url) {
     this->callJava = callJava;
     this->url = url;
@@ -178,7 +177,7 @@ void MNFFmpeg::seek(jint secds) {
     }
 
     if (secds >= 0 && secds <= duration) {
-        pthread_mutex_lock(&seek_mutex);
+        pthread_mutex_lock(&seek_mutex); //seek 需要上锁, 防止多次 seek 出现问题
         if (audio != NULL) {
             playstatus->seek = true;
             audio->queue->clearAvpacket();
@@ -186,14 +185,15 @@ void MNFFmpeg::seek(jint secds) {
             audio->last_tiem = 0;
 
 //            s    *  us
-            int64_t rel = secds * AV_TIME_BASE;
+            int64_t rel = secds * AV_TIME_BASE;//将 secds 秒转换为 微秒
+//          stream_index 是流索引, 如果只有一个流那么传 -1
+//          min_ts 是前面 I 帧的最小数, max_ts 是后面 I 帧的最大数
             avformat_seek_file(pFormatCtx, -1, INT64_MIN, rel, INT64_MAX, 0);
 
             playstatus->seek = false;
         }
         pthread_mutex_unlock(&seek_mutex);
     }
-
 }
 
 void MNFFmpeg::resume() {

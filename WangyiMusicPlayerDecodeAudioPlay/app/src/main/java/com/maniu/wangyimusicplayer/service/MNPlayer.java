@@ -32,10 +32,8 @@ public class MNPlayer {
             }
 
         }).start();
-
-
-
     }
+
     public void start()
     {
         if(TextUtils.isEmpty(source))
@@ -49,9 +47,8 @@ public class MNPlayer {
                 n_start();
             }
         }).start();
-
-
     }
+
     public void pause() {
         n_pause();
     }
@@ -62,15 +59,15 @@ public class MNPlayer {
 
     public native void n_parpared(String source);
 
-
+    //native 调用该方法
     public void onCallTimeInfo(int currentTime, int totalTime)
     {
         if (playerListener == null) {
             return;
         }
         playerListener.onCurrentTime(currentTime, totalTime);
-
     }
+
     public void onCallParpared() {
         Log.d("david--->", "onCallParpared");
 
