@@ -19,11 +19,11 @@ MNAudio::MNAudio(MNPlaystatus *playstatus, int sample_rate, MNCallJava *callJava
     soundTouch->setSampleRate(sample_rate);
 //    设值通道数据
     soundTouch->setChannels(2);
-    soundTouch->setTempo(1.5);
+    soundTouch->setTempo(1.5); //速度调整为 1.5 倍
     float pitch = 2.0f;
     soundTouch->setPitch(
             pitch
-    );
+    );//变调
 }
 //c
 void *decodPlay(void *data) {
