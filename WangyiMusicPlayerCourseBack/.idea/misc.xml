@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/maniu50/WangyiMusicPlayer/app/src/main/res/layout/activity_main.xml" value="0.17198581560283688" />
+        <entry key="..\:/maniu50/WangyiMusicPlayer/app/src/main/res/layout/activity_main_music.xml" value="0.3446557971014493" />
+        <entry key="..\:/maniu50/WangyiMusicPlayer/app/src/main/res/layout/activity_main_video.xml" value="0.4351851851851852" />
+        <entry key="..\:/maniu50/WangyiMusicPlayer/app/src/main/res/layout/layout_disc.xml" value="0.3536458333333333" />
+        <entry key="..\:/maniu50/WangyiMusicPlayer/app/src/main/res/layout/layout_discview.xml" value="0.3536458333333333" />
+        <entry key="..\:/maniu56/WangyiMusicPlayer/app/src/main/res/layout/activity_main_video.xml" value="0.48518518518518516" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>
