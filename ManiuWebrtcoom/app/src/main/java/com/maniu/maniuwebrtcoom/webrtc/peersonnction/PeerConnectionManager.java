@@ -111,6 +111,7 @@ public class PeerConnectionManager {
     private void createOffers() {
         for (Map.Entry<String, Peer> entry : connectionPeerDic.entrySet()) {
             Peer mPeer = entry.getValue();
+            //createOffer 就是获取本地到服务端的 sdp, 如果响应成功会回调 Peer 中的 onCreateSuccess() 方法
             mPeer.pc.createOffer(mPeer, offerOrAnswerConstraint());
         }
     }
